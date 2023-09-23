@@ -18,7 +18,7 @@ class ProductManager {
                     limit = parsedInfo.length
                 }
 
-                // Hacer una nueva lista de productos limitado al query pasado. 
+                // Hacer una nueva lista de productos limitado al query pasado.
                 for(let i=0 ; i<+limit ; i++){
                     limitedInfo.push(parsedInfo[i])
                 }
@@ -50,7 +50,19 @@ class ProductManager {
                 return "Error! El código identificador del producto ya existe. Revisar el producto."
             } else {
                 let id = info.length ? info[info.length - 1].id + 1 : 1;
-                const newProduct = { id, ...product };
+                // const newProduct = { id, ...product };
+                let newProduct = {
+                    id : id,
+                    title: product.title,
+                    description: product.description,
+                    code: product.code,
+                    price: product.price,
+                    status: product.status == undefined ? true : product.status,
+                    stock: product.stock,
+                    category: product.category,
+                    thumbnails: product.thumbnails ? product.thumbnails : [],
+
+                }
                 info.push(newProduct)
                 await fs.promises.writeFile(this.path, JSON.stringify(info))
                 return newProduct;
@@ -105,6 +117,5 @@ class ProductManager {
 
 }
 
-// Exporto una instancia de ProductManager
-export const productsManager = new ProductManager('Products.json')
+export const productsManager = new ProductManager('productos.json')
 
