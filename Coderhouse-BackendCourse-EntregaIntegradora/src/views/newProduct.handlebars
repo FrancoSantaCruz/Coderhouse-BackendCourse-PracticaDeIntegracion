@@ -1,0 +1,46 @@
+<form action="/api/products/" method="post">
+
+    <div>
+        <p>Title</p>
+        <input type="text" name="title" id="title">
+    </div>
+    <div>
+        <p>Description</p>
+        <input type="" name="description" id="description">
+    </div>
+    <div>
+        <p>Code</p>
+        <input type="number" name="code" id="code">
+    </div>
+    <div>
+        <p>Price</p>
+        <input type="number" name="price" id="price" min="0">
+    </div>
+    <div>
+        <p>Status</p>
+        <input type="radio" id="disponible" name="status" value="True">
+        <label for="disponible">Disponible</label><br>
+        <input type="radio" id="noDisponible" name="status" value="False">
+        <label for="noDisponible">No Disponible</label><br>
+    </div>
+    <div>
+        <p>Stock</p>
+        <input type="number" name="stock" id="stock" min="0">
+    </div>
+    <div>
+        <p>Category</p>
+        <input type="radio" id="alimento" name="category" value="alimento">
+        <label for="alimento">Alimentos</label><br>
+        <input type="radio" id="ropa" name="category" value="ropaYaccesorios">
+        <label for="ropa">Ropa y Accesorios</label><br>
+        <input type="radio" id="electrodomesticos" name="category" value="electrodomestico">
+        <label for="electrodomesticos">Electrodomésticos</label>
+    </div>
+    <div>
+        <p>Thumbnail</p>
+        <input type="text" name="thumbnail" id="thumbnail">
+    </div>
+
+    <button type="submit">CREATE</button>
+
+</form>

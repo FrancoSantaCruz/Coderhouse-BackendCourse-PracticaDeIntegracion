@@ -1,0 +1,18 @@
+<h1>Catálogo de Productos</h1>
+{{#if products}}
+    {{#each products}}
+        <hr>
+        <div>
+            <h2>{{title}}</h2>
+            <h3>{{description}}</h3>
+            <p>${{price}} | Cantidad disponible: {{stock}}</p>
+            {{#if status}}
+            <p>Disponible</p>
+            {{else}}
+            <p>No disponible</p>
+            {{/if}}
+        </div>
+    {{/each}}
+{{else}}
+    <h1>NO HAY PRODUCTOS DISPONIBLES</h1>   
+{{/if}}
