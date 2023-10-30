@@ -6,21 +6,47 @@ const chatForm = document.getElementById("chatForm");
 const chatMessage = document.getElementById("chatMessage");
 const chat = document.getElementById("chat");
 
-Swal.fire({
-    title: "Bienvenidx!",
-    text: "Ingresa tu email 😊",
-    input: "text",
-    confirmButtonText: "Enter",
-    inputValidator: value => {
-        if (!value) {
-            return 'El nombre es un campo obligatorio 😢'
-        }
+
+
+
+
+swal({
+    title: 'Multiple inputs',
+    html:
+      '<input id="swal-input1" class="swal2-input">' +
+      '<input id="swal-input2" class="swal2-input">',
+    preConfirm: function () {
+      return new Promise(function (resolve) {
+        resolve([
+          $('#swal-input1').val(),
+          $('#swal-input2').val()
+        ])
+      })
+    },
+    onOpen: function () {
+      $('#swal-input1').focus()
     }
+  }).then(function (result) {
+    swal(JSON.stringify(result))
+  }).catch(swal.noop)
+
+
+
+Swal.fire({
+    // title: "Bienvenidx!",
+    // text: "Ingresa tu email 😊",
+    // input: "text",
+    // confirmButtonText: "Enter",
+    // inputValidator: value => {
+    //     if (!value) {
+    //         return 'El nombre es un campo obligatorio 😢'
+    //     }
+    // }
+    
 }).then(input => {
     user = input.value
     username.innerText = user
     socketClient.emit("newUser", user)
-    // messagesManager.createOne({userEmail : user, message: {}})
 })
 socketClient.on('newUserBroadcast', (user) => {
     Toastify({
@@ -45,7 +71,6 @@ chatForm.onsubmit = (e) => {
         message: chatMessage.value
     };
     socketClient.emit("message", infoMessage);
-    // messagesManager.updateOne()
 }
 
 socketClient.on('chat', (messages) => {

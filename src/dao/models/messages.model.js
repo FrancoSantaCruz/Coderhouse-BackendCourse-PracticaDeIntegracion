@@ -18,18 +18,10 @@ const chatSchema = new Schema({
 })
 
 const messagesSchema = new Schema({
-    // chats: {
-    //     type: [{userEmail : String, message: String}],
-    //     require: true,
-    // }
-    // userEmail: franco@hotmail, message: "Hola"
-
     chats: {
         type: [chatSchema],
         default: []
-    },
-
-
+    }
 })
 
 export const messagesModel = model('Messages', messagesSchema)
