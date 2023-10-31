@@ -39,16 +39,44 @@ app.use('/api/chats', messagesRouter);
 
 // WebSocket Message
 socketServer.on("connection", (socket) => {
-    socket.on("newUser", (user) => {
-        socket.broadcast.emit("newUserBroadcast", user)
-        // guardar el usuario en db
-        userManager.createOne(user)
-    })
+    let userFound
+    socket.on("newUser", async (user) => {
 
-    socket.on("message", (info) => {
-        messages.push(info);
+        userFound = await validator(user[1])
+        userFound = userFound[0]
+        if(!userFound){
+            let obj = {
+                name: user[0],
+                email: user[1],
+                password: user[2] 
+            }
+            userManager.createOne(obj)
+            socket.broadcast.emit("newUserBroadcast", user[0])
+        } else {
+            // No hago uso de createOne porque el usuario ya existe
+            // Pero si hago el emit siguiendo el flujo del websocket
+            socket.broadcast.emit("newUserBroadcast", userFound)
+        }
+    })
+    
+    socket.on("message", async (info) => {
         // guardar el mensaje del usuario.
-        messagesManager.createOne(info) 
-        socketServer.emit("chat", messages);
+        let chat = [
+            {
+                autor: userFound._id,
+                content: info.message,
+                date: new Date()
+            }
+        ]
+        console.log(chat)
+        const res = await messagesManager.createOne(chat) 
+        console.log(res)
+        socketServer.emit("chat", chat);
     })
 })
+
+async function validator(email){
+    const users = await userManager.findAll()
+    let user = users.filter( user => user.email == email)
+    return user
+}

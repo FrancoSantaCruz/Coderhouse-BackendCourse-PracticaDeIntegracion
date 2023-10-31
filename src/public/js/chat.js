@@ -7,50 +7,32 @@ const chatMessage = document.getElementById("chatMessage");
 const chat = document.getElementById("chat");
 
 
-
-
-
-swal({
-    title: 'Multiple inputs',
-    html:
-      '<input id="swal-input1" class="swal2-input">' +
-      '<input id="swal-input2" class="swal2-input">',
-    preConfirm: function () {
-      return new Promise(function (resolve) {
-        resolve([
-          $('#swal-input1').val(),
-          $('#swal-input2').val()
-        ])
-      })
-    },
-    onOpen: function () {
-      $('#swal-input1').focus()
-    }
-  }).then(function (result) {
-    swal(JSON.stringify(result))
-  }).catch(swal.noop)
-
-
-
 Swal.fire({
-    // title: "Bienvenidx!",
-    // text: "Ingresa tu email 😊",
-    // input: "text",
-    // confirmButtonText: "Enter",
-    // inputValidator: value => {
-    //     if (!value) {
-    //         return 'El nombre es un campo obligatorio 😢'
-    //     }
-    // }
+    title: "Bienvenidx!",
+    html:
+        '<br><label>Name</label>'+
+        '<input id="swal-input1" class="swal2-input">' +
+        '<br><label>Email</label>'+
+        '<input id="swal-input2" class="swal2-input">' +
+        '<br><label>Password</label>'+
+        '<input id="swal-input3" class="swal2-input">',
+    focusConfirm: false,
+    preConfirm: () => {
+        return [
+          document.getElementById('swal-input1').value,
+          document.getElementById('swal-input2').value,
+          document.getElementById('swal-input3').value
+        ]
+      }
     
 }).then(input => {
     user = input.value
-    username.innerText = user
+    username.innerText = input.value[0]
     socketClient.emit("newUser", user)
 })
 socketClient.on('newUserBroadcast', (user) => {
     Toastify({
-        text: `${user} se ha conectado`,
+        text: `${user.name} se ha conectado`,
         duration: 5000,
         newWindow: true,
         close: true,
@@ -65,20 +47,10 @@ socketClient.on('newUserBroadcast', (user) => {
 
 chatForm.onsubmit = (e) => {
     e.preventDefault();
-
-    const infoMessage = {
-        name: user,
-        message: chatMessage.value
-    };
-    socketClient.emit("message", infoMessage);
+    socketClient.emit("message", {message: chatMessage.value});
 }
 
 socketClient.on('chat', (messages) => {
-    const chatMessage = messages.map( (message) => `<p>${message.name}: ${message.message}</p>` ).join(" ");
+    const chatMessage = messages.map( (message) => `<p>${message.autor}: ${message.content}</p>` ).join(" ");
     chat.innerHTML = chatMessage;
 })
-
-// Validación del lado del front. 
-// fetch('http://example.com/movies.json', {context})
-//   .then(response => response.json())
-//   .then(data => console.log(data));
