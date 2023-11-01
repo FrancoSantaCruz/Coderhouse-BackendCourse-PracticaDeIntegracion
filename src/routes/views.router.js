@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { productsManager } from '../dao/MongoManager/products.manager.js'
 import { cartsManager } from "../dao/MongoManager/carts.manager.js";
+import { messagesManager } from "../dao/MongoManager/messages.manager.js";
 
 const router = Router()
 
@@ -30,5 +31,17 @@ router.get('/cart/:cid', async(req,res) => {
     res.render('cart', {cart : cart.products})
 })
 
+router.get("/chats", async (req, res) => {
+    const chats = await messagesManager.findAll()
+    res.render("chats", {chats});
+});
 
+router.get("/chat/:cid", async (req, res) => {
+    const { cid } = req.params
+    const chat = await messagesManager.findByID(cid)
+    console.log(chat)
+    console.log("--");
+    console.log(chat.chats)
+    res.render("chat", { messages: chat.chats });
+});
 export default router

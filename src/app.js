@@ -15,14 +15,14 @@ import { userManager } from './dao/MongoManager/users.manager.js'
 const app = express();
 
 app.use(express.json());
-app.use(express.urlencoded({extended:true}));
-app.use(express.static(__dirname+'/public'));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(__dirname + '/public'));
 
 // Handlebars
 
 app.engine('handlebars', handlebars.engine());
 app.set('view engine', 'handlebars');
-app.set('views', __dirname+'/views');
+app.set('views', __dirname + '/views');
 
 
 const httpServer = app.listen(8080, () => {
@@ -44,11 +44,11 @@ socketServer.on("connection", (socket) => {
 
         userFound = await validator(user[1])
         userFound = userFound[0]
-        if(!userFound){
+        if (!userFound) {
             let obj = {
                 name: user[0],
                 email: user[1],
-                password: user[2] 
+                password: user[2]
             }
             userManager.createOne(obj)
             socket.broadcast.emit("newUserBroadcast", user[0])
@@ -58,25 +58,25 @@ socketServer.on("connection", (socket) => {
             socket.broadcast.emit("newUserBroadcast", userFound)
         }
     })
-    
-    socket.on("message", async (info) => {
+
+    socket.on("message", (info) => {
         // guardar el mensaje del usuario.
-        let chat = [
-            {
-                autor: userFound._id,
-                content: info.message,
-                date: new Date()
-            }
-        ]
-        console.log(chat)
-        const res = await messagesManager.createOne(chat) 
-        console.log(res)
-        socketServer.emit("chat", chat);
+        let obj = {
+            chats: [
+                {
+                    autor: userFound._id,
+                    content: info.message,
+                    date: new Date()
+                }
+            ]
+        }
+        messagesManager.createOne(obj)
+        socketServer.emit("chat", obj);
     })
 })
 
-async function validator(email){
+async function validator(email) {
     const users = await userManager.findAll()
-    let user = users.filter( user => user.email == email)
+    let user = users.filter(user => user.email == email)
     return user
 }
