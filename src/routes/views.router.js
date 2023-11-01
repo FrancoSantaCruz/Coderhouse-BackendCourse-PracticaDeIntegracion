@@ -39,9 +39,6 @@ router.get("/chats", async (req, res) => {
 router.get("/chat/:cid", async (req, res) => {
     const { cid } = req.params
     const chat = await messagesManager.findByID(cid)
-    console.log(chat)
-    console.log("--");
-    console.log(chat.chats)
-    res.render("chat", { messages: chat.chats });
+    res.render("chat", { chat: chat._id , messages: chat.chats });
 });
 export default router

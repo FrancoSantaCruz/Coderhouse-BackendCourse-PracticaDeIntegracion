@@ -39,6 +39,7 @@ app.use('/api/chats', messagesRouter);
 
 // WebSocket Message
 socketServer.on("connection", (socket) => {
+    // -------------------------USER SOCKET--------------------------------
     let userFound
     socket.on("newUser", async (user) => {
 
@@ -58,7 +59,9 @@ socketServer.on("connection", (socket) => {
             socket.broadcast.emit("newUserBroadcast", userFound)
         }
     })
+    // -------------------------------------------------------------
 
+    // -----------------------CHAT SOCKET--------------------------------
     socket.on("message", (info) => {
         // guardar el mensaje del usuario.
         let obj = {
