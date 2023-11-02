@@ -1,12 +1,9 @@
-# Coderhouse | Backend Course  <sup>Final Project</sup>
+# Coderhouse | Backend Course 
 
 ### Alumno: Santa Cruz, Franco Agustín. 
 
-- [x] **Pre-entrega N° 01**: Cart Manager & Products Manager
-- [ ] **Pre-entrega N° 02**:
-- [ ] **Pre-entrega N° 03**:
-- [ ] **Entrega Proyecto Final**:
-
+Clase 08. Mongoose & Primera práctica integradora.
+Entrega: Práctica de integración sobre un ecommerce.
 
 > [!NOTE]
 > Comisión 47310. Sáb 11:30hs - 16:00hs.
