@@ -5,17 +5,14 @@ import { messagesManager } from "../dao/MongoManager/messages.manager.js";
 
 const router = Router()
 
+// HOME
 router.get('/', (req, res) => {
     res.render('home')
 })
 
-router.get('/new-product', (req,res) => {
-    res.render('newProduct')
-})
-
 router.get('/products', async(req, res) => {
     const products = await productsManager.findAll()
-    res.render('allProducts', {products})
+    res.render('products', {products:products, style:"products"})
 })
 
 router.get('/product/:pid', async(req, res) => {
@@ -24,6 +21,9 @@ router.get('/product/:pid', async(req, res) => {
     res.render('oneProduct', {product})
 })
 
+
+
+// CARTS VIEWS
 router.get('/cart/:cid', async(req,res) => {
     const {cid} = req.params   
     const cart = await cartsManager.findByID(cid)
@@ -31,6 +31,10 @@ router.get('/cart/:cid', async(req,res) => {
     res.render('cart', {cart : cart.products})
 })
 
+
+
+
+// CHATS VIEWS
 router.get("/chats", async (req, res) => {
     const chats = await messagesManager.findAll()
     res.render("chats", {chats});
@@ -41,4 +45,9 @@ router.get("/chat/:cid", async (req, res) => {
     const chat = await messagesManager.findByID(cid)
     res.render("chat", { chat: chat._id , messages: chat.chats });
 });
+
+
+
+
+
 export default router

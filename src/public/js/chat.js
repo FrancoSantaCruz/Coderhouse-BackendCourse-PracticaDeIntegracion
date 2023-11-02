@@ -1,11 +1,10 @@
 const socketClient = io()
-// import { messagesManager } from "../../dao/MongoManager/messages.manager";
 
 const username = document.getElementById("username");
 const chatForm = document.getElementById("chatForm");
 const chatMessage = document.getElementById("chatMessage");
 const chat = document.getElementById("chat");
-
+const chat_id = document.getElementById("chat_id")
 
 Swal.fire({
     title: "Bienvenidx!",
@@ -47,10 +46,12 @@ socketClient.on('newUserBroadcast', (user) => {
 
 chatForm.onsubmit = (e) => {
     e.preventDefault();
-    socketClient.emit("message", {message: chatMessage.value});
+    let aux = chat_id.textContent.split(':')
+    const cid = aux[1].trim()
+    socketClient.emit("message", {message: chatMessage.value, id: cid});
 }
 
 socketClient.on('chat', (messages) => {
-    const chatMessage = messages.chats.map( (message) => `<p>${message.autor}: ${message.content}</p>` ).join(" ");
+    const chatMessage = messages.map( (message) => `<p>${message.autor}: ${message.content}</p>` ).join(" ");
     chat.innerHTML = chatMessage;
 })

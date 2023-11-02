@@ -11,6 +11,7 @@ import messagesRouter from './routes/messages.router.js';
 
 import { messagesManager } from './dao/MongoManager/messages.manager.js';
 import { userManager } from './dao/MongoManager/users.manager.js'
+import { productsManager } from './dao/MongoManager/products.manager.js';
 
 const app = express();
 
@@ -37,13 +38,16 @@ app.use('/api/products', productsRouter);
 app.use('/api/carts', cartsRouter);
 app.use('/api/chats', messagesRouter);
 
-// WebSocket Message
+
+// ----------------------------- WebSocket ------------------------------------
 socketServer.on("connection", (socket) => {
+
+
     // -------------------------USER SOCKET--------------------------------
     let userFound
     socket.on("newUser", async (user) => {
 
-        userFound = await validator(user[1])
+        userFound = await userValidator(user[1])
         userFound = userFound[0]
         if (!userFound) {
             let obj = {
@@ -51,7 +55,7 @@ socketServer.on("connection", (socket) => {
                 email: user[1],
                 password: user[2]
             }
-            userManager.createOne(obj)
+            userFound = await userManager.createOne(obj)
             socket.broadcast.emit("newUserBroadcast", user[0])
         } else {
             // No hago uso de createOne porque el usuario ya existe
@@ -60,10 +64,13 @@ socketServer.on("connection", (socket) => {
         }
     })
     // -------------------------------------------------------------
+ 
+
 
     // -----------------------CHAT SOCKET--------------------------------
-    socket.on("message", (info) => {
-        // guardar el mensaje del usuario.
+    socket.on("message", async (info) => {
+        
+        // Creo un objeto con la misma estructura que el schema de message.
         let obj = {
             chats: [
                 {
@@ -73,13 +80,43 @@ socketServer.on("connection", (socket) => {
                 }
             ]
         }
-        messagesManager.createOne(obj)
-        socketServer.emit("chat", obj);
+
+        // Valido si el chat existe en la DB
+        let chatFound = await chatValidator(info.id)
+        // Si no existe, crea un nuevo chat con el mensaje nuevo.
+        // Si existe el chat, agrega a ese chat los mensajes.
+        if(!chatFound){
+            messagesManager.createOne(obj)
+            // socketServer.emit("chat", obj);
+        } else {
+            chatFound.chats = [ ...chatFound.chats, ...obj.chats]
+            messagesManager.updateOne(info.id, chatFound)
+        }
+        socketServer.emit("chat", chatFound.chats);
     })
+    // -------------------------------------------------------------
+
+
+    // -----------------------PRODUCTS SOCKET--------------------------------
+
+    socket.on("product", async (product) => {
+        await productsManager.createOne(product)
+
+        const products = await productsManager.findAll()
+        socketServer.emit("allProducts", products)
+    })
+
+
 })
 
-async function validator(email) {
+async function userValidator(email) {
     const users = await userManager.findAll()
     let user = users.filter(user => user.email == email)
     return user
+}
+
+async function chatValidator(id) {
+    const chats = await messagesManager.findAll()
+    let chat = chats.filter(chat => chat._id == id)
+    return chat[0]
 }
